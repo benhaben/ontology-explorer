@@ -5,6 +5,8 @@ const prodEnv = require('./prod.env');
 
 module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
+  BASE_URL: '"https://localhost/"',
+  BC_URL: '"https://localhost:8090/api/v1/"',
 
   // 单独提供给addresses页面的接口，golang实现的
   EXPLORE_URL: '"https://explorer.ont.io/"',
