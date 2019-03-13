@@ -50,8 +50,8 @@
     <logger name="dao" level="DEBUG" additivity="false">
     	<appender-ref ref="STDOUT"/>
     	<appender-ref ref="FILE_EXPLORER" />
-   </logger>  
-  
+   </logger>
+
   <!-- For loggers in the these namespaces, log at DEBUG levels above. -->
     <logger name="com.github.ontio" level="DEBUG" additivity="false">
     	<appender-ref ref="STDOUT"/>

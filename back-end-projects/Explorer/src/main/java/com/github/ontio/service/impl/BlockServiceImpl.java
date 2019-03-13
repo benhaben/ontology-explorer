@@ -28,6 +28,7 @@ import com.github.ontio.paramBean.Result;
 import com.github.ontio.service.IBlockService;
 import com.github.ontio.utils.ErrorInfo;
 import com.github.ontio.utils.Helper;
+import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ import java.util.Map;
 
 
 @Service("BlockService")
-//@MapperScan("com.github.ontio.dao")
+@MapperScan("com.github.ontio.dao")
 public class BlockServiceImpl implements IBlockService {
 
     private static final Logger logger = LoggerFactory.getLogger(BlockServiceImpl.class);

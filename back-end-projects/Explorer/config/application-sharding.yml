@@ -1,0 +1,25 @@
+server:
+  port: 9090
+
+sharding.jdbc:
+  data-sources:
+    ds_master:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://172.168.3.44:3306/explorer?useUnicode=true&characterEncoding=utf8&useSSL=false
+      username: root
+      password: explorertest
+    ds_slave_0:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://172.168.3.45:3306/explorer?useUnicode=true&characterEncoding=utf8&useSSL=false
+      username: root
+      password: explorertest
+    ds_slave_1:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://172.168.3.46:3306/explorer?useUnicode=true&characterEncoding=utf8&useSSL=false
+      username: root
+      password: explorertest
+  master-slave-rule:
+    name: ds_ms
+    master-data-source-name: ds_master
+    slave-data-source-names: [ds_slave_0,ds_slave_0]
+    load-balance-algorithm-type: round_robin
