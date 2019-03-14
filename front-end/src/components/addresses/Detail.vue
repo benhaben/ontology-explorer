@@ -9,7 +9,7 @@
     </detail-block-2>
 
     <!--可领取和未领取的ONG显示-->
-    <div class="detail-col">
+    <div class="detail-col" v-loading="assetBalanceLoading">
       <div class="row">
         <div class="col table1_item_title">
           <span class="f-color">{{ $t('addressDetail.claimable') }}</span>
@@ -25,7 +25,7 @@
     </div>
 
     <!--2018年万圣节南瓜活动资产-->
-    <div class="row" v-if="havePumpkin">
+    <div class="row" v-if="havePumpkin" v-loading="assetBalanceLoading">
       <div class="col">
         <div class="detail-col">
           {{ $t('addressDetail.oep8Assets') }}
@@ -75,7 +75,7 @@
       <div class="col">
         <div class="detail-col">
           <span class="font-blod table1_item_title">{{ $t('addressDetail.oepOtherAssets') }}</span>
-          <div v-for="(asset,index) in AssetBalance" v-if="index > 12" class="row font-size14 oep-4-5-div">
+          <div v-for="(asset,index) in assetBalance" v-if="index > 12" class="row font-size14 oep-4-5-div">
             <div class="table1_item_title font-Regular">
               <span class="f-color">{{ asset.AssetName.toUpperCase() + ": " }}</span>
               <span class="important_color">{{parseFloat(asset.Balance)}}</span>
@@ -86,7 +86,7 @@
     </div>
 
     <!--交易历史-->
-    <div class="row">
+    <div class="row" v-loading="txnListLoading">
       <div class="col">
         <div class="detail-col">
           <div class="row font-size18 font-blod normal_color">
@@ -103,7 +103,7 @@
 
           <div class="row table-responsive">
             <div class="col">
-              <table v-if="info.TxnTotal !== 0" class="table">
+              <table v-if="info.total !== 0" class="table">
                 <thead>
                 <tr>
                   <th class="td-tx-head table3_head font-size18 font-blod normal_color">{{$t('all.hash')}}</th>
@@ -170,38 +170,42 @@
       return {
         Ddo: {},
         claimflag: true,
-        AssetBalance: [],
         havePumpkin: false, // 标识是否显示2018年万圣节南瓜资产
         haveOtherOep: false, // 标识是否显示OEP-4/5资产
         TxnList: [],
         info: [],
-        tmpDown: ''
+        tmpDown: '',
+        txnListLoading:true,
+        assetBalanceLoading:true
       }
     },
     created() {
       if (this.$route.params.pageSize == undefined || this.$route.params.pageNumber == undefined) {
         this.toAddressDetailPage(this.$route.params.address)
       } else {
-        this.getAddressDetailData()
+        this.getAddressDetailData();
+        this.getAddressBalanceData();
       }
     },
     watch: {
       '$route': 'getAddressDetailData',
       'addressDetail': function () {
-        this.info = this.addressDetail.list;
-        this.AssetBalance = this.info.AssetBalance;
-        if (this.info.AssetBalance.length > 4) { // 有南瓜资产
-          this.havePumpkin = (this.info.AssetBalance[12].Balance !== '0' && this.info.AssetBalance[12].Balance !== 0)
+        this.info = this.addressDetail;
+        this.TxnList = this.info.list;
+      },
+      'assetBalance':function() {
+        if (this.assetBalance.length > 4) { // 有南瓜资产
+          this.havePumpkin = (this.assetBalance[12].Balance !== '0' && this.assetBalance[12].Balance !== 0)
         }
-        if (this.info.AssetBalance.length > 13) { // 有OEP4、5的其他资产
+        if (this.assetBalance.length > 13) { // 有OEP4、5的其他资产
           this.haveOtherOep = true
         }
-        this.TxnList = this.info.TxnList;
       }
     },
     computed: {
       ...mapState({
-        addressDetail: state => state.Addresses.Detail
+        addressDetail: state => state.Addresses.Detail,
+        assetBalance:state => state.Addresses.AssetBalance
       }),
       /**
        * 取出全部资产名称和值
@@ -209,17 +213,26 @@
       assetsVal: function () {
         let retAssets = {};
 
-        for (let index in this.AssetBalance) {
-          retAssets[this.AssetBalance[index].AssetName] = this.$HelperTools.toFinancialVal(this.AssetBalance[index].Balance)
+        for (let index in this.assetBalance) {
+          retAssets[this.assetBalance[index].AssetName] = this.$HelperTools.toFinancialVal(this.assetBalance[index].Balance)
         }
 
         return retAssets
       }
     },
     methods: {
-      getAddressDetailData() {
-        this.$store.dispatch('GetAddressDetail', this.$route.params).then()
+      async getAddressDetailData() {
+        this.txnListLoading = true;
+        await this.$store.dispatch('GetAddressDetail', this.$route.params);
+        this.txnListLoading = false;
       },
+
+      async getAddressBalanceData() {
+        this.assetBalanceLoading = true;
+        await this.$store.dispatch('GetAddressBalance', this.$route.params);
+        this.assetBalanceLoading = false;
+      },
+
       toReturn() {
         this.$router.go(-1)
       },

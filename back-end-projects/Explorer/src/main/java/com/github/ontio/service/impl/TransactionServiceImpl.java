@@ -216,10 +216,8 @@ public class TransactionServiceImpl implements ITransactionService {
         }
 
         //获取账户余额，可提取的ong，待提取的ong
-        List<Object> balanceList = getAddressBalance(address, "");
 
         Map<String, Object> rs = new HashMap<>();
-        rs.put("AssetBalance", balanceList);
         rs.put("TxnList", returnTxnList);
 
         return Helper.result("QueryAddressInfo", ErrorInfo.SUCCESS.code(), ErrorInfo.SUCCESS.desc(), VERSION, rs);
@@ -335,7 +333,6 @@ public class TransactionServiceImpl implements ITransactionService {
         rs.put("TxnList", returnTxnList);
 
         return Helper.result("QueryAddressInfo", ErrorInfo.SUCCESS.code(), ErrorInfo.SUCCESS.desc(), VERSION, rs);
-
     }
 
     @Override
@@ -368,8 +365,6 @@ public class TransactionServiceImpl implements ITransactionService {
         Map<String, Object> rs = new HashMap<>();
         rs.put("AssetBalance", balanceList);
         rs.put("TxnList", rsList);
-        //rs.put("TxnTotal", txnAmount);
-
         return Helper.result("QueryAddressInfo", ErrorInfo.SUCCESS.code(), ErrorInfo.SUCCESS.desc(), VERSION, rs);
 
     }
