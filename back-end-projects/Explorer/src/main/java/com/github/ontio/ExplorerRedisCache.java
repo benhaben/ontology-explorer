@@ -3,6 +3,7 @@ package com.github.ontio;
 import org.apache.ibatis.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
@@ -28,7 +29,8 @@ public class ExplorerRedisCache implements Cache {
     // 读写锁
     private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock(true);
 
-    private RedisTemplate<String, Object> redisTemplate = ApplicationContextProvider.getBean("redisTemplate");
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     private String id = "defaultrediscacheid001";
 
